@@ -4,7 +4,9 @@
 A projekt React + Vite alapokon készült, Tailwind CSS-sel a felület kialakításához és egy Laravel alapú REST API-hoz kapcsolódik.
 Ez egy frontend-only repository, a backend külön repo-ban található.
 
-# Technológiai stack
+---
+
+## Technológiai stack
 
 - React
 - Vite
@@ -12,24 +14,33 @@ Ez egy frontend-only repository, a backend külön repo-ban található.
 - JavaScript (ES6+)
 - Fetch API
 
-# Követelmények
+---
+
+## Követelmények
 
 A futtatáshoz az alábbiak szükségesek:
 - Node.js
 - npm
 
 Ellenőrzés:
+```bash
 node -v
 npm -v
+```
+---
 
-# Projekt telepítése és futtatása
+## Projekt telepítése és futtatása
 
 Repository klónozása:
+```bash
 git clone https://github.com/inataniel/jobtrack-frontend.git
 cd jobtrack-frontend
-
+```
 Függőségek telepítése:
+```bash
 npm install
-
+```
 Fejlesztői szerver indítása:
+```bash
 npm run dev
+```
