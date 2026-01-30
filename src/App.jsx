@@ -26,7 +26,7 @@ function App() {
 
     setError("");
 
-    const response = await fetch("http://localhost:8000/api/applications", {
+    const response = await fetch("/api/applications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function App() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/applications");
+      const res = await fetch("/api/applications");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setApplications(Array.isArray(data) ? data : []);
