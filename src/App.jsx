@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Modal from "./components/Modal";
+import ApplicationForm from "./components/ApplicationForm";
 
 function App() {
   const [form, setForm] = useState({
@@ -7,6 +9,10 @@ function App() {
     status: "applied",
     description: "",
   });
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -18,7 +24,9 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://127.0.0.1:8000/api/applications", {
+    setError("");
+
+    const response = await fetch("http://localhost:8000/api/applications", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,9 +34,25 @@ function App() {
       body: JSON.stringify(form),
     });
 
+    if (!response.ok) {
+      setError("Mentés sikertelen. Ellenőrizd a backend logot / validációt.");
+      return;
+    }
+
     const data = await response.json();
     console.log(data);
-    alert("Elküldve!");
+
+    // form ürítés
+    setForm({
+      company: "",
+      position: "",
+      status: "applied",
+      description: "",
+    });
+
+    // lista frissítés
+    await fetchApplications();
+    setIsModalOpen(false);
   };
 
   const STATUS_OPTIONS = {
@@ -40,10 +64,6 @@ function App() {
     offer: "Ajánlatot kaptam",
     rejected: "Elutasítva",
   };
-
-  const [applications, setApplications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -69,6 +89,24 @@ function App() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-3">Jelentkezések</h2>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="rounded-xl bg-blue-600 px-4 py-2 text-white"
+        >
+          + Új jelentkezés
+        </button>
+
+        <Modal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Új jelentkezés">
+          <ApplicationForm
+            form={form}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onCancel={() => setIsModalOpen(false)}
+          />
+        </Modal>
 
         {loading && <p className="text-sm opacity-70">Betöltés…</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -107,54 +145,6 @@ function App() {
           ))}
         </div>
       </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-96 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-center">Új állásjelentkezés</h1>
-
-        <input
-          name="company"
-          placeholder="Cég neve"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-        />
-
-        <input
-          name="position"
-          placeholder="Pozíció"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-        />
-
-        <textarea
-          name="description"
-          placeholder="Megjegyzések (pl. kontakt neve, határidő, benyomások)"
-          className="w-full border p-2 rounded"
-          rows={4}
-          onChange={handleChange}
-        />
-
-        <select
-          name="status"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-        >
-          {Object.entries(STATUS_OPTIONS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Mentés
-        </button>
-      </form>
     </div>
   );
 }
