@@ -1,12 +1,4 @@
-const STATUS_LABELS = {
-  applied: "Jelentkezés elküldve",
-  invited_to_interview: "Interjúra behívva",
-  interview_done: "Interjú lezajlott",
-  test_assigned: "Tesztfeladat kiküldve",
-  test_submitted: "Tesztfeladat elküldve",
-  offer: "Ajánlatot kaptam",
-  rejected: "Elutasítva",
-};
+import { STATUS_OPTIONS } from "../constants/applicationStatus";
 
 export default function ApplicationForm({
   form,
@@ -14,7 +6,6 @@ export default function ApplicationForm({
   onSubmit,
   onCancel,
   generalError = "",
-  errors = {},
 }) {
   return (
     <form onSubmit={onSubmit} className="space-y-3">
@@ -28,7 +19,7 @@ export default function ApplicationForm({
         value={form.company}
         onChange={onChange}
         className="w-full rounded-lg border p-2"
-        placeholder="Cég neve"
+        placeholder="Cég neve*"
       />
 
       <input
@@ -36,7 +27,7 @@ export default function ApplicationForm({
         value={form.position}
         onChange={onChange}
         className="w-full rounded-lg border p-2"
-        placeholder="Pozíció"
+        placeholder="Pozíció*"
       />
 
       <select
@@ -45,9 +36,9 @@ export default function ApplicationForm({
         onChange={onChange}
         className="w-full rounded-lg border p-2"
       >
-        {Object.entries(STATUS_LABELS).map(([value, label]) => (
-          <option key={value} value={value}>
-            {label}
+        {STATUS_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
           </option>
         ))}
       </select>
@@ -60,6 +51,7 @@ export default function ApplicationForm({
         rows={4}
         placeholder="Megjegyzések"
       />
+      <p>*A csillaggal jelölt mezők kitöltése kötelező!</p>
 
       <div className="flex justify-end gap-2 pt-2">
         <button
