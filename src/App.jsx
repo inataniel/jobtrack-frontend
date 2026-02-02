@@ -109,12 +109,12 @@ function App() {
   return (
     <div className="min-h-screen items-center justify-center m-4">
       <div>
-        <h1 className="text-2xl font-bold mb-3">JobTrack</h1>
+        <h1 className="text-2xl font-bold">JobTrack</h1>
         <p>Állásjelentkezések nyomon követése</p>
       </div>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="rounded-xl bg-blue-600 px-4 py-2 text-white mb-3"
+        className="rounded-xl bg-blue-600 px-4 py-2 text-white mb-3 mt-3"
       >
         + Új állásjelentkezés
       </button>

@@ -6,7 +6,7 @@ export default function ApplicationList({
   error = "",
 }) {
     return (
-        <section className="mt-8">
+        <section className="mt-3">
             <div className="flex items-end justify-between gap-4">
                 <h2 className="text-xl font-semibold">Jelentkezések</h2>
 
@@ -36,14 +36,14 @@ export default function ApplicationList({
                     className="rounded-2xl border bg-white p-4 shadow-sm"
                 >
                     <div className="flex items-start justify-between gap-4">
-                    <div>
-                        <p className="font-semibold">{app.company}</p>
-                        <p className="text-sm opacity-80">{app.position}</p>
-                    </div>
+                        <div>
+                            <p className="font-semibold">{app.company}</p>
+                            <p className="text-sm opacity-80">{app.position}</p>
+                        </div>
 
-                    <span className="shrink-0 rounded-full border px-2 py-1 text-xs">
-                        {STATUS_LABELS[app.status] ?? app.status}
-                    </span>
+                        <span className="shrink-0 rounded-full border px-2 py-1 text-xs">
+                            {STATUS_LABELS[app.status] ?? app.status}
+                        </span>
                     </div>
 
                     {app.description && (
@@ -58,6 +58,9 @@ export default function ApplicationList({
                         ? new Date(app.created_at).toLocaleString("hu-HU")
                         : "—"}
                     </p>
+                    <button>
+                        Egy gomb
+                    </button>
                 </article>
                 ))}
             </div>
