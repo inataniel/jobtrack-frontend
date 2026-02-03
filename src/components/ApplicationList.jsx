@@ -1,9 +1,10 @@
-import { STATUS_LABELS } from "../constants/applicationStatus";
-
 export default function ApplicationList({
   applications = [],
   loading = false,
   error = "",
+  statusLabels = {},
+  onEdit,
+  onDelete,
 }) {
     return (
         <section className="mt-3">
@@ -40,10 +41,25 @@ export default function ApplicationList({
                             <p className="font-semibold">{app.company}</p>
                             <p className="text-sm opacity-80">{app.position}</p>
                         </div>
+                        <div className="flex items-center gap-2">
+                            <span className="shrink-0 rounded-full border px-2 py-1 text-xs">
+                                {statusLabels[app.status] ?? app.status}
+                            </span>
 
-                        <span className="shrink-0 rounded-full border px-2 py-1 text-xs">
-                            {STATUS_LABELS[app.status] ?? app.status}
-                        </span>
+                            <button
+                                onClick={() => onEdit(app)}
+                                className="rounded-lg border px-2 py-1 text-xs hover:bg-gray-50"
+                            >
+                                Szerkesztés
+                            </button>
+
+                            <button
+                                onClick={() => onDelete(app.id)}
+                                className="rounded-lg border border-red-200 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
+                            >
+                                Törlés
+                            </button>
+                        </div>
                     </div>
 
                     {app.description && (
@@ -58,9 +74,6 @@ export default function ApplicationList({
                         ? new Date(app.created_at).toLocaleString("hu-HU")
                         : "—"}
                     </p>
-                    <button>
-                        Egy gomb
-                    </button>
                 </article>
                 ))}
             </div>

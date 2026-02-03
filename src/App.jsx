@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./components/Modal";
 import ApplicationForm from "./components/ApplicationForm";
 import ApplicationList from "./components/ApplicationList";
+import { STATUS_LABELS } from "./constants/applicationStatus";
 
 const INITIAL_FORM = {
   company: "",
@@ -12,14 +13,18 @@ const INITIAL_FORM = {
 
 function App() {
   const [form, setForm] = useState(INITIAL_FORM);
-  const resetForm = () => setForm(INITIAL_FORM);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingApplication, setEditingApplication] = useState(null); // null = create, object = edit
+
   const [listError, setListError] = useState("");
   const [modalError, setModalError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({}); 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [csrfToken, setCsrfToken] = useState("");
+
+  const resetForm = () => setForm(INITIAL_FORM);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -27,11 +32,46 @@ function App() {
     setFieldErrors({});
     resetForm();
   };
+
+  const openEdit = (app) => {
+    setEditingApplication(app);
+    setForm({
+      company: app.company ?? "",
+      position: app.position ?? "",
+      status: app.status ?? "applied",
+      description: app.description ?? "",
+    });
+    setModalError("");
+    setFieldErrors({});
+    setIsModalOpen(true);
+  };
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleDelete = async (id) => {
+    const ok = confirm("Biztosan törlöd ezt a jelentkezést?");
+    if (!ok) return;
+
+    const res = await fetch(`/api/applications/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "X-CSRF-TOKEN": csrfToken,
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      alert(`Törlés sikertelen (HTTP ${res.status}).`);
+      return;
+    }
+
+    await fetchApplications();
   };
 
   const handleSubmit = async (e) => {
@@ -47,8 +87,14 @@ function App() {
       return;
     }
 
-    const response = await fetch("/api/applications", {
-      method: "POST",
+    const isEdit = Boolean(editingApplication?.id);
+    const url = isEdit
+    ? `/api/applications/${editingApplication.id}`
+    : "/api/applications";
+    const method = isEdit ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method,
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +159,11 @@ function App() {
         <p>Állásjelentkezések nyomon követése</p>
       </div>
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          setEditingApplication(null);
+          setForm(INITIAL_FORM);
+          setIsModalOpen(true);
+        }}
         className="rounded-xl bg-blue-600 px-4 py-2 text-white mb-3 mt-3"
       >
         + Új állásjelentkezés
@@ -123,6 +173,9 @@ function App() {
           applications={applications}
           loading={loading}
           error={listError}
+          statusLabels={STATUS_LABELS}
+          onEdit={openEdit}
+          onDelete={handleDelete}
       />
 
       <Modal open={isModalOpen} onClose={closeModal} title="Új jelentkezés">
