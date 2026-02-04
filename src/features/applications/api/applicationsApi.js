@@ -6,19 +6,17 @@ async function parseJsonOrText(response) {
 }
 
 export async function listApplications() {
-  const response = await fetch("/api/applications", { credentials: "include" });
+  const response = await fetch("/api/applications");
   const { payload } = await parseJsonOrText(response);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return Array.isArray(payload) ? payload : [];
 }
 
-export async function createApplication(data, csrfToken) {
+export async function createApplication(data) {
   const response = await fetch("/api/applications", {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRF-TOKEN": csrfToken,
       Accept: "application/json",
     },
     body: JSON.stringify(data),
@@ -28,13 +26,11 @@ export async function createApplication(data, csrfToken) {
   return { response, isJson, payload };
 }
 
-export async function updateApplication(id, data, csrfToken) {
+export async function updateApplication(id, data) {
   const response = await fetch(`/api/applications/${id}`, {
     method: "PUT",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      "X-CSRF-TOKEN": csrfToken,
       Accept: "application/json",
     },
     body: JSON.stringify(data),
@@ -44,15 +40,26 @@ export async function updateApplication(id, data, csrfToken) {
   return { response, isJson, payload };
 }
 
-export async function deleteApplication(id, csrfToken) {
+export async function deleteApplication(id) {
   const response = await fetch(`/api/applications/${id}`, {
     method: "DELETE",
-    credentials: "include",
     headers: {
-      "X-CSRF-TOKEN": csrfToken,
       Accept: "application/json",
     },
   });
 
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
+}
+
+export async function deleteAllApplications() {
+  const response = await fetch(`/api/applications`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
 }
