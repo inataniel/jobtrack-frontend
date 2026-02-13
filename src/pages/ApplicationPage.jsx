@@ -12,6 +12,8 @@ import {
 } from "../features/applications/api/applicationsApi";
 import { useApplications } from "../features/applications/hooks/useApplications";
 
+import { useAuth } from "../features/auth/AuthContext";
+
 const INITIAL_FORM = {
   company: "",
   position: "",
@@ -20,6 +22,8 @@ const INITIAL_FORM = {
 };
 
 export default function ApplicationPage() {
+  const { logout } = useAuth();
+  
   const {
     applications,
     loading,
@@ -146,6 +150,12 @@ export default function ApplicationPage() {
       <header>
         <h1 className="text-2xl font-bold">JobTrack</h1>
         <p>Állásjelentkezések nyomon követése</p>
+        <button
+          onClick={logout}
+          className="bg-gray-500 text-white px-3 py-1 rounded ml-4"
+        >
+          Kilépés
+        </button>
       </header>
 
       <button
